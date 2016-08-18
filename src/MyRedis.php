@@ -16,6 +16,7 @@ class MyRedis
 {
     protected static $_instance = null;
     protected $redis;
+    protected $prefix = 'demo_';
 
     /**
      * MyRedis constructor.
@@ -66,6 +67,11 @@ class MyRedis
         return self::$_instance;
     }
 
+    public function setPrefix($prefix = '')
+    {
+        $this->prefix = $prefix;
+    }
+
     /**
      * [__call desc]
      * @author limx
@@ -75,6 +81,11 @@ class MyRedis
      */
     public function __call($name, $arguments)
     {
+        if (is_array($arguments)) {
+            if (count($arguments) > 0) {
+                $arguments[0] = $this->prefix . $arguments[0];
+            }
+        }
         return call_user_func_array([$this->redis, $name], $arguments);
     }
 
