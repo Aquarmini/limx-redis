@@ -97,10 +97,21 @@ class MyRedis
     {
         if (is_array($arguments)) {
             if (count($arguments) > 0) {
-                $arguments[0] = $this->prefix . $arguments[0];
+                $arguments[0] = $this->retKey($arguments[0]);
             }
         }
         return call_user_func_array([$this->redis, $name], $arguments);
+    }
+
+    public function retKey($key)
+    {
+        if (is_array($key)) {
+            foreach ($key as $i => $v) {
+                $key[$i] = $this->retKey($v);
+            }
+        } else {
+            return $this->prefix . $key;
+        }
     }
 
 
