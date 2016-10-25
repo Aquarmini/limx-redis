@@ -76,6 +76,11 @@ class MyRedis
         $this->prefix = $prefix . ':';
     }
 
+    public function setLocalPrefix($prefix = '')
+    {
+        $this->prefix = $prefix;
+    }
+
     /**
      * [__call desc]
      * @author limx
