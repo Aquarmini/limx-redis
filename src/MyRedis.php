@@ -94,7 +94,11 @@ class MyRedis
      */
     public function keys($pattern = '*')
     {
-        return $this->redis->keys($this->retKey($pattern));
+        $res = $this->redis->keys($this->retKey($pattern));
+        foreach ($res as $i => $v) {
+            $res[$i] = preg_replace($this->prefix, '', $v, 1);
+        }
+        return $res;
     }
 
 
