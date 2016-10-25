@@ -87,6 +87,18 @@ class MyRedis
     }
 
     /**
+     * [keys desc]
+     * @desc 重写keys方法
+     * @author limx
+     * @param string $pattern
+     */
+    public function keys($pattern = '*')
+    {
+        return $this->redis->keys($this->retKey($pattern));
+    }
+
+
+    /**
      * [__call desc]
      * @author limx
      * @param $name
@@ -103,12 +115,20 @@ class MyRedis
         return call_user_func_array([$this->redis, $name], $arguments);
     }
 
+    /**
+     * [retKey desc]
+     * @desc 为操作符增加前缀
+     * @author limx
+     * @param $key
+     * @return string
+     */
     public function retKey($key)
     {
         if (is_array($key)) {
             foreach ($key as $i => $v) {
                 $key[$i] = $this->retKey($v);
             }
+            return $key;
         } else {
             return $this->prefix . $key;
         }
