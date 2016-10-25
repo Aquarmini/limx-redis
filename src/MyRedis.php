@@ -78,11 +78,6 @@ class MyRedis
 
     public function setPrefix($prefix = '')
     {
-        $this->prefix = $prefix . ':';
-    }
-
-    public function setLocalPrefix($prefix = '')
-    {
         $this->prefix = $prefix;
     }
 
