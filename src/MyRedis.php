@@ -24,13 +24,16 @@ class MyRedis
      * @param $port
      * @param $auth
      */
-    private function __construct($host, $port, $auth)
+    private function __construct($host, $port, $auth, $db)
     {
         try {
             $this->redis = new Redis();
             $this->redis->connect($host, $port);
             if (!empty($auth)) {
                 $this->redis->auth($auth);
+            }
+            if ($db > 0) {
+                $this->redis->select($db);
             }
         } catch (PDOException $e) {
             $this->outputError($e->getMessage());
@@ -64,9 +67,11 @@ class MyRedis
         $host = $config['host'];
         $auth = $config['auth'];
         $port = $config['port'];
+        $db = $config['database'];
+
 
         if (self::$_instance === null) {
-            self::$_instance = new self($host, $port, $auth);
+            self::$_instance = new self($host, $port, $auth, $db);
         }
         return self::$_instance;
     }
@@ -79,6 +84,11 @@ class MyRedis
     public function setLocalPrefix($prefix = '')
     {
         $this->prefix = $prefix;
+    }
+
+    public function select($id = 0)
+    {
+        $this->redis->select($id);
     }
 
     /**
