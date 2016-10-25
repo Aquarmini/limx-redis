@@ -47,11 +47,11 @@ class MyRedis
     /**
      * [getInstance desc]
      * @author limx
-     * @param array $config= [
-                        'host' => '127.0.0.1',
-                        'auth' => '',
-                        'port' => '6379',
-                    ];
+     * @param array $config = [
+     * 'host' => '127.0.0.1',
+     * 'auth' => '',
+     * 'port' => '6379',
+     * ];
      * @return MyRedis|null
      */
     public static function getInstance($config = [])
@@ -73,7 +73,7 @@ class MyRedis
 
     public function setPrefix($prefix = '')
     {
-        $this->prefix = $prefix;
+        $this->prefix = $prefix . ':';
     }
 
     /**
