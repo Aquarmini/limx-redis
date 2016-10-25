@@ -16,7 +16,7 @@ class MyRedis
 {
     protected static $_instance = null;
     protected $redis;
-    protected $prefix = 'demo_';
+    protected $prefix = 'demo:';
 
     /**
      * MyRedis constructor.
