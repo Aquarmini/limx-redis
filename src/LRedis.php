@@ -6,17 +6,16 @@
 // +----------------------------------------------------------------------
 // | Author: limx <715557344@qq.com> <http://www.lmx0536.cn>
 // +----------------------------------------------------------------------
-// | Date: 2016/8/17 Time: 10:35
+// | Date: 2016/11/16 Time: 16:35
 // +----------------------------------------------------------------------
 namespace limx\tools;
 
 use Redis;
 
-class MyRedis
+class LRedis
 {
-    protected static $_instance = null;
+    protected static $_instance = [];
     protected $redis;
-    protected $prefix = '';
 
     /**
      * MyRedis constructor.
@@ -69,38 +68,13 @@ class MyRedis
         $port = $config['port'];
         $db = $config['database'];
 
+        $key = md5(json_encode($config));
 
-        if (self::$_instance === null) {
-            self::$_instance = new self($host, $port, $auth, $db);
+        if (empty(self::$_instance[$key])) {
+            self::$_instance[$key] = new self($host, $port, $auth, $db);
         }
-        return self::$_instance;
+        return self::$_instance[$key];
     }
-
-    public function setPrefix($prefix = '')
-    {
-        $this->prefix = $prefix;
-    }
-
-    public function select($id = 0)
-    {
-        $this->redis->select($id);
-    }
-
-    /**
-     * [keys desc]
-     * @desc 重写keys方法
-     * @author limx
-     * @param string $pattern
-     */
-    public function keys($pattern = '*')
-    {
-        $res = $this->redis->keys($this->retKey($pattern));
-        foreach ($res as $i => $v) {
-            $res[$i] = preg_replace('/' . $this->prefix . '/', '', $v, 1);
-        }
-        return $res;
-    }
-
 
     /**
      * [__call desc]
@@ -111,47 +85,7 @@ class MyRedis
      */
     public function __call($name, $arguments)
     {
-        if (is_array($arguments)) {
-            if (count($arguments) > 0) {
-                $arguments[0] = $this->retKey($arguments[0]);
-            }
-        }
         return call_user_func_array([$this->redis, $name], $arguments);
-    }
-
-    /**
-     * [retKey desc]
-     * @desc 为操作符增加前缀
-     * @author limx
-     * @param $key
-     * @return string
-     */
-    public function retKey($key)
-    {
-        if ($this->prefix == '') {
-            /** 当默认前缀为空字符串时，返回原数据 */
-            return $key;
-        }
-        if (is_array($key)) {
-            foreach ($key as $i => $v) {
-                $key[$i] = $this->retKey($v);
-            }
-            return $key;
-        } else {
-            return $this->prefix . $key;
-        }
-    }
-
-
-    /**
-     * debug
-     *
-     * @param mixed $debuginfo
-     */
-    private function debug($debuginfo)
-    {
-        var_dump($debuginfo);
-        exit();
     }
 
     /**
@@ -163,5 +97,4 @@ class MyRedis
     {
         throw new Exception('Redis Error: ' . $strErrMsg);
     }
-
 }
